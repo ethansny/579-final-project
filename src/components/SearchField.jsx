@@ -7,7 +7,6 @@ import WeatherData2 from './WeatherData2';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 const filterBy = (option, resort) => {
     if (resort.selected.length) {
