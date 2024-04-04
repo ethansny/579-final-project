@@ -3,10 +3,11 @@ import { useState } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import WeatherData from './WeatherData';
 import options from "/579-final-project/src/assets/data.js";
-
+import WeatherData2 from './WeatherData2';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 const filterBy = (option, resort) => {
     if (resort.selected.length) {
@@ -34,6 +35,7 @@ const SearchField = () => {
   const [minTemp, setMinTemp] = useState([])
   const [showers, setShowers] = useState([])
   const [snowfall, setSnowfall] = useState([])
+  const [weatherData, setWeatherData] = useState({})
   const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
 
   const  getWeatherData = async  () => {
@@ -41,11 +43,14 @@ const SearchField = () => {
     const data = await response.json()
     // console.log(data.daily)
     // console.log(data.daily.temperature_2m_max.length)
+    setWeatherData(data.daily)
     setMaxTemp(data.daily.temperature_2m_max)
     setMinTemp(data.daily.temperature_2m_min)
     setShowers(data.daily.showers_sum)
     setSnowfall(data.daily.snowfall_sum)
     console.log(data.daily)
+    console.log(weatherData)
+    // console.log(maxTemp)
   }
 
   const updateResort = (e) => {
@@ -55,7 +60,6 @@ const SearchField = () => {
     let lat = parseFloat(e[0].latitude).toFixed(2);
     let lon = parseFloat(e[0].longitude).toFixed(2);
     setSelectedResort([lat, lon])
-    console.log(selectedResort)
   }
 
     return (
@@ -70,7 +74,9 @@ const SearchField = () => {
           />
           <button onClick={getWeatherData}>Submit</button>
           </div>
-        <WeatherData maxTemp={maxTemp} minTemp={minTemp} showers={showers} snowfall={snowfall}/>
+        {/* <WeatherData maxTemp={maxTemp} minTemp={minTemp} showers={showers} snowfall={snowfall}/> */}
+        <WeatherData2 weatherData={weatherData}/>
+
         </>
     )
     }
