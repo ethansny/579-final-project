@@ -2,11 +2,10 @@ import React from 'react'
 import { useState } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import WeatherData from './WeatherData';
-import options from "/579-final-project/src/assets/data.js";
-import WeatherData2 from './WeatherData2';
+import resorts from "/579-final-project/src/assets/resorts.js";
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css';
 
 const filterBy = (option, resort) => {
     if (resort.selected.length) {
@@ -29,27 +28,14 @@ const ToggleButton = ({ isOpen, onClick }) => (
 
 const SearchField = () => {
 
-  const [selectedResort, setSelectedResort] = useState([]);
-  const [maxTemp, setMaxTemp] = useState([])
-  const [minTemp, setMinTemp] = useState([])
-  const [showers, setShowers] = useState([])
-  const [snowfall, setSnowfall] = useState([])
-  const [weatherData, setWeatherData] = useState({})
+  const [selectedResort, setSelectedResort] = useState(null);
+  const [weatherData, setWeatherData] = useState(null)
   const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
 
   const  getWeatherData = async  () => {
-    const response = await fetch(`${endpointRoot}latitude=${selectedResort[0]}&longitude=${selectedResort[1]}&daily=temperature_2m_max,temperature_2m_min,showers_sum,snowfall_sum&timezone=America%2FNew_York`)
+    const response = await fetch(`${endpointRoot}latitude=${selectedResort[0][0]}&longitude=${selectedResort[0][1]}&daily=temperature_2m_max,temperature_2m_min,showers_sum,snowfall_sum&timezone=America%2FNew_York`)
     const data = await response.json()
-    // console.log(data.daily)
-    // console.log(data.daily.temperature_2m_max.length)
     setWeatherData(data.daily)
-    setMaxTemp(data.daily.temperature_2m_max)
-    setMinTemp(data.daily.temperature_2m_min)
-    setShowers(data.daily.showers_sum)
-    setSnowfall(data.daily.snowfall_sum)
-    console.log(data.daily)
-    console.log(weatherData)
-    // console.log(maxTemp)
   }
 
   const updateResort = (e) => {
@@ -58,7 +44,7 @@ const SearchField = () => {
     }
     let lat = parseFloat(e[0].latitude).toFixed(2);
     let lon = parseFloat(e[0].longitude).toFixed(2);
-    setSelectedResort([lat, lon])
+    setSelectedResort([[lat, lon], e[0].label])
   }
 
     return (
@@ -67,15 +53,29 @@ const SearchField = () => {
         <Typeahead
             filterBy={filterBy}
             id="toggle-example"
-            options={options}
+            options={resorts}
             placeholder="Choose a resort..."
-            onChange={(e) => updateResort(e)}
+            onChange={(e) => {
+              updateResort(e)
+              setWeatherData(null)
+            }}
           />
           <button onClick={getWeatherData}>Submit</button>
           </div>
-        {/* <WeatherData maxTemp={maxTemp} minTemp={minTemp} showers={showers} snowfall={snowfall}/> */}
-        <WeatherData2 weatherData={weatherData}/>
-
+        <WeatherData weatherData={weatherData} resort={selectedResort}/>
+        <MapContainer center={[39.8283, -98.5795]} zoom={2} scrollWheelZoom={true} style={{ width: "70vw", height: "400px", border: "1px solid black" }}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        {selectedResort && (
+          <Marker position={[selectedResort[0][0], selectedResort[0][1]]}>
+            <Popup>
+              <b>{selectedResort[1]}</b>
+            </Popup>
+          </Marker>
+        )}
+        </MapContainer>
         </>
     )
     }
