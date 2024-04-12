@@ -1,33 +1,39 @@
-import React from "react";
-import { useState } from 'react'
-import 'bootstrap/dist/css/bootstrap.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Stack from 'react-bootstrap/Stack';
 
-const WeatherData = ({maxTemp, minTemp, showers, snowfall}) => {
+const WeatherData = ({weatherData, resort}) => {
+    const renderWeatherData = () => {
+        return weatherData.time.map((day, index) => {
+            const maxTemp = weatherData.temperature_2m_max[index];
+            const minTemp = weatherData.temperature_2m_min[index];
+            const showers = weatherData.showers_sum[index];
+            const snowfall = weatherData.snowfall_sum[index];
+            return (
+                <Col key={day}>
+                <Stack>
+                    <div>{day}</div>
+                    <div>Hi: {maxTemp}°C</div>
+                    <div>Low: {minTemp}°C</div>
+                    <div>Snow: {snowfall}cm</div>
+                </Stack>
+                </Col>
 
+            );
+        });
+    }
     return (
         <div>
+          <h2>Weather Forecast for {resort ? resort[1] : null}</h2>
+          <Container>
+          <Row>
+            {weatherData ? renderWeatherData() : null}
+            </Row>
+          </Container>
 
-            <div className="d-flex flex-column bd-highlight mb-3">
-                <div className="p-2 bd-highlight d-flex flex-row">
-                    <h5>Max Temp</h5>
-                    <div className="p-2 bd-highlight d-flex flex-row">{maxTemp.map((temp, index) => <div className="p-2 bd-highlight" key={index}>{temp}</div>)}</div>
-                </div>
-            `   <div className="p-2 bd-highlight d-flex flex-row">
-                    <h5>Min Temp</h5>
-                    <div className="p-2 bd-highlight d-flex flex-row">{minTemp.map((temp, index) => <div className="p-2 bd-highlight" key={index}>{temp}</div>)}</div>
-                </div>
-                <div className="p-2 bd-highlight d-flex flex-row">
-                    <h5>Showers</h5>
-                    <div className="p-2 bd-highlight d-flex flex-row">{showers.map((temp, index) => <div className="p-2 bd-highlight" key={index}>{temp}</div>)}</div>
-                </div>
-                <div className="p-2 bd-highlight d-flex flex-row">
-                    <h5>Snowfall</h5>
-                    <div className="p-2 bd-highlight d-flex flex-row">{snowfall.map((temp, index) => <div className="p-2 bd-highlight" key={index}>{temp}</div>)}</div>
-                </div>
-
-            </div>
         </div>
-    )
+      );
 }
 
 export default WeatherData;
