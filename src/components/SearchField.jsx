@@ -4,7 +4,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import WeatherData from './WeatherData';
 import resorts from "/579-final-project/src/assets/resorts.js";
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 
 const filterBy = (option, resort) => {
@@ -26,13 +26,37 @@ const ToggleButton = ({ isOpen, onClick }) => (
   </button>
 );
 
+
+
 const SearchField = () => {
 
   const [selectedResort, setSelectedResort] = useState(null);
   const [weatherData, setWeatherData] = useState(null)
   const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
 
+  function LocationMarker() {
+    const [position, setPosition] = useState(null)
+    const map = useMapEvents({
+      click(e) {
+        const wrappedLatLng = map.wrapLatLng(e.latlng);
+        setPosition(wrappedLatLng)
+        console.log(wrappedLatLng)
+        const lat = parseFloat(wrappedLatLng.lat).toFixed(2);
+        let lng = parseFloat(wrappedLatLng.lng).toFixed(2);
+        setSelectedResort([[lat, lng], "Selected Location"])
+        setWeatherData(null)
+      },
+    })
+  
+    return position === null ? null : (
+      <Marker position={position}>
+        <Popup>{[lat, lng]}</Popup>
+      </Marker>
+    )
+  }
+ 
   const  getWeatherData = async  () => {
+    console.log(selectedResort[0][0], selectedResort[0][1])
     const response = await fetch(`${endpointRoot}latitude=${selectedResort[0][0]}&longitude=${selectedResort[0][1]}&daily=temperature_2m_max,temperature_2m_min,showers_sum,snowfall_sum&timezone=America%2FNew_York`)
     const data = await response.json()
     setWeatherData(data.daily)
@@ -49,6 +73,20 @@ const SearchField = () => {
 
     return (
         <>
+        <MapContainer   maxBounds={[[-90, -180],[90, 180]]} worldCopyJump={true} center={[39.8283, -98.5795]} zoom={2} scrollWheelZoom={true} style={{ width: "70vw", height: "400px", border: "1px solid black" }}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {selectedResort && (
+            <Marker position={[selectedResort[0][0], selectedResort[0][1]]}>
+              <Popup>
+                <b>{selectedResort[1]}</b>
+              </Popup>
+            </Marker>
+          )}
+          <LocationMarker />
+        </MapContainer>
         <div className="d-flex flex-row bd-highlight mb-3">
         <Typeahead
             filterBy={filterBy}
@@ -60,22 +98,10 @@ const SearchField = () => {
               setWeatherData(null)
             }}
           />
-          <button onClick={getWeatherData}>Submit</button>
+          <button onClick={getWeatherData}>Get Weather Data</button>
           </div>
         <WeatherData weatherData={weatherData} resort={selectedResort}/>
-        <MapContainer center={[39.8283, -98.5795]} zoom={2} scrollWheelZoom={true} style={{ width: "70vw", height: "400px", border: "1px solid black" }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        {selectedResort && (
-          <Marker position={[selectedResort[0][0], selectedResort[0][1]]}>
-            <Popup>
-              <b>{selectedResort[1]}</b>
-            </Popup>
-          </Marker>
-        )}
-        </MapContainer>
+
         </>
     )
     }

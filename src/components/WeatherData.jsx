@@ -14,9 +14,9 @@ const WeatherData = ({weatherData, resort}) => {
                 <Col key={day}>
                 <Stack>
                     <div>{day}</div>
-                    <div>{maxTemp}°C</div>
-                    <div>{minTemp}°C</div>
-                    <div>{snowfall}cm</div>
+                    <div>Hi: {maxTemp}°C</div>
+                    <div>Low: {minTemp}°C</div>
+                    <div>Snow: {snowfall}cm</div>
                 </Stack>
                 </Col>
 
