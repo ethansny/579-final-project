@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import WeatherData from './WeatherData';
-import resorts from "/..assets/resorts.js";
+import resorts from "../assets/resorts.js";
 
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
