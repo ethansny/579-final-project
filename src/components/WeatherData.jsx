@@ -4,11 +4,11 @@ import Col from 'react-bootstrap/Col';
 import Stack from 'react-bootstrap/Stack';
 
 const WeatherData = ({weatherData, resort}) => {
+
     const renderWeatherData = () => {
         return weatherData.time.map((day, index) => {
             const maxTemp = weatherData.temperature_2m_max[index];
             const minTemp = weatherData.temperature_2m_min[index];
-            const showers = weatherData.showers_sum[index];
             const snowfall = weatherData.snowfall_sum[index];
             return (
                 <Col key={day}>

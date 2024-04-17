@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import WeatherData from './WeatherData';
 import resorts from "/579-final-project/src/assets/resorts.js";
+import Filters from './Filters';
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
@@ -32,7 +34,9 @@ const SearchField = () => {
 
   const [selectedResort, setSelectedResort] = useState(null);
   const [weatherData, setWeatherData] = useState(null)
+  const [weatherFilters, setWeatherFilters] = useState(['temperature_2m_max', 'temperature_2m_min', 'snowfall_sum'])
   const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
+  const possibleFilters = ['daylight_duration', 'wind_speed_10m_max', 'wind_gusts_10m_max']
 
   function LocationMarker() {
     const [position, setPosition] = useState(null)
@@ -40,24 +44,25 @@ const SearchField = () => {
       click(e) {
         const wrappedLatLng = map.wrapLatLng(e.latlng);
         setPosition(wrappedLatLng)
-        console.log(wrappedLatLng)
         const lat = parseFloat(wrappedLatLng.lat).toFixed(2);
         let lng = parseFloat(wrappedLatLng.lng).toFixed(2);
         setSelectedResort([[lat, lng], "Selected Location"])
         setWeatherData(null)
       },
     })
-  
+
     return position === null ? null : (
       <Marker position={position}>
         <Popup>{[lat, lng]}</Popup>
       </Marker>
     )
   }
- 
+
   const  getWeatherData = async  () => {
-    console.log(selectedResort[0][0], selectedResort[0][1])
-    const response = await fetch(`${endpointRoot}latitude=${selectedResort[0][0]}&longitude=${selectedResort[0][1]}&daily=temperature_2m_max,temperature_2m_min,showers_sum,snowfall_sum&timezone=America%2FNew_York`)
+    let filters = ''
+    weatherFilters.forEach((filter) => filters += filter + ',')
+    console.log(filters)
+    const response = await fetch(`${endpointRoot}latitude=${selectedResort[0][0]}&longitude=${selectedResort[0][1]},&daily=,${filters}&timezone=America%2FNew_York`)
     const data = await response.json()
     setWeatherData(data.daily)
   }
@@ -100,6 +105,9 @@ const SearchField = () => {
           />
           <button onClick={getWeatherData}>Get Weather Data</button>
           </div>
+          <ToggleButtonGroup type="checkbox" value={weatherFilters} onChange={setWeatherFilters}>
+        {possibleFilters.map((filter, index) => <Filters key={filter} setFilters={setWeatherFilters} filters={weatherFilters} filter={filter}/> )}
+        </ToggleButtonGroup>
         <WeatherData weatherData={weatherData} resort={selectedResort}/>
 
         </>
