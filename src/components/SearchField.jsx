@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import WeatherData from './WeatherData';
-import resorts from "/579-final-project/src/assets/resorts.js";
+import resorts from "../assets/resorts.js";
 import Filters from './Filters';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
