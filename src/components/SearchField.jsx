@@ -1,35 +1,29 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Typeahead } from 'react-bootstrap-typeahead';
-import WeatherData from './WeatherData';
-import resorts from "../assets/resorts.js";
 import { ToggleButtonGroup, ToggleButton, Button, Modal } from 'react-bootstrap';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css';
+
+import WeatherData from './WeatherData';
 import ErrorModal from './ErrorModal';
 
-
-const filterBy = (option, resort) => {
-  if (resort.selected.length) {
-    return true;
-  }
-  return option.label.toLowerCase().indexOf(resort.text.toLowerCase()) > -1;
-}
+import resorts from "../assets/resorts.js";
+import 'leaflet/dist/leaflet.css';
 
 
 const SearchField = () => {
+  const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
+  const defaultFilters = ['temperature_2m_max', 'temperature_2m_min', 'snowfall_sum']
+  const possibleFilters = ['daylight_duration', 'wind_speed_10m_max', 'wind_gusts_10m_max']
 
   const [selectedResort, setSelectedResort] = useState(null);
   const [weatherData, setWeatherData] = useState(null)
-  const defaultFilters = ['temperature_2m_max', 'temperature_2m_min', 'snowfall_sum']
   const [weatherFilters, setWeatherFilters] = useState(['temperature_2m_max', 'temperature_2m_min', 'snowfall_sum'])
-  const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
-  const possibleFilters = ['daylight_duration', 'wind_speed_10m_max', 'wind_gusts_10m_max']
+
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-
-  function LocationMarker() {
+  // This function was provided by React-Leaflet
+  const LocationMarker = () => {
     const [position, setPosition] = useState(null)
     const map = useMapEvents({
       click(e) {
@@ -49,18 +43,17 @@ const SearchField = () => {
     )
   }
 
-
   const getWeatherData = async () => {
     try {
       const filters = [...defaultFilters, ...weatherFilters];
       const filterString = filters.join(',');
+
       const response = await fetch(`${endpointRoot}latitude=${selectedResort[0][0]}&longitude=${selectedResort[0][1]},&daily=,${filterString}&timezone=America%2FNew_York`);
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
+      if (!response.ok) throw new Error('API request failed');
+  
       const data = await response.json();
       setWeatherData(data.daily);
-      setErrorMessage(''); // Clear the error message if the request was successful
+      setErrorMessage('');
     } catch (error) {
       setErrorMessage('Please select a location');
       setShowModal(true);
@@ -68,9 +61,7 @@ const SearchField = () => {
   };
 
   const updateResort = (e) => {
-    if (e.length === 0) {
-      return
-    }
+    if (e.length === 0) return;
     let lat = parseFloat(e[0].latitude).toFixed(2);
     let lon = parseFloat(e[0].longitude).toFixed(2);
     setSelectedResort([[lat, lon], e[0].label])
@@ -96,7 +87,6 @@ const SearchField = () => {
       <div className="d-flex flex-row bd-highlight mb-3">
         <Typeahead
           className='searchBar'
-          filterBy={filterBy}
           id="toggle-example"
           options={resorts}
           placeholder="Choose a resort..."
@@ -114,7 +104,7 @@ const SearchField = () => {
           {possibleFilters.map((filter, index) => <ToggleButton key={filter} id={`tbg-check-${index + 1}`} value={filter}>{filter}</ToggleButton>)}
         </ToggleButtonGroup>
       </div>
-  
+
       <WeatherData weatherData={weatherData} resort={selectedResort} />
       <ErrorModal show={showModal} handleClose={() => setShowModal(false)} errorMessage={errorMessage} />
     </>

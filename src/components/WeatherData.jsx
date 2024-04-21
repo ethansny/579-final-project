@@ -51,7 +51,7 @@ const WeatherData = ({ weatherData, resort }) => {
       <h2>Weather Forecast for {resort ? resort[1] : null}</h2>
       <Container className='weatherContainer'>
         <Row>
-          {weatherData ? renderWeatherData() : null}
+          {weatherData ? renderWeatherData() : "Awaiting data..."}
         </Row>
       </Container>
 
