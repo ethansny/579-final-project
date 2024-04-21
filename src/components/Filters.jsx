@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 const Filters = ({ setFilters, filters, filter }) => {
-    const [checked, setChecked] = useState(false);
+
+  const [checked, setChecked] = useState(false);
+
   return (
     <div className="filters">
       <ToggleButton
