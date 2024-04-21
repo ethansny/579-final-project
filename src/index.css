@@ -11,6 +11,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100vw;
 }
 
 a {
@@ -23,11 +24,9 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+margin-left: auto;
+margin-right: auto;
+
 }
 
 h1 {
@@ -65,4 +64,63 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.col {
+  background-color: lightblue;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.row{
+  flex-direction: column;
+  width: auto;
+}
+
+.btn-group{
+  flex-direction:column ;
+  gap: 10px;
+}
+
+.btn-primary{
+  border-radius: 5px !important;
+}
+
+@media (min-width: 1000px) {
+  .row {
+    flex-direction: row;
+    width: auto;
+  }
+  .btn-group{
+    flex-direction:row ;
+
+  }
+}
+
+.weatherContainer{
+  width: 90vw;
+}
+
+#root{
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5% 0 0 0;
+  min-height: 100vh;
+}
+
+.leaflet-container {
+  margin:0 auto 0 auto;
+}
+
+.searchBar{
+  margin: 10px auto 10px auto;
+}
+
+.buttons{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 50vw;
+  align-items: center;
+  margin: 0 auto 0 auto;
 }
