@@ -8,7 +8,8 @@ import ErrorModal from './ErrorModal';
 
 import resorts from "../assets/resorts.js";
 import 'leaflet/dist/leaflet.css';
-
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 const SearchField = () => {
   const endpointRoot = 'https://api.open-meteo.com/v1/forecast?'
@@ -21,6 +22,13 @@ const SearchField = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+
+  let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow
+  });
+
+  L.Marker.prototype.options.icon = DefaultIcon;
 
   // This function was provided by React-Leaflet
   const LocationMarker = () => {
@@ -92,8 +100,12 @@ const SearchField = () => {
           placeholder="Choose a resort..."
           selected={selectedResort ? [selectedResort[1]] : []}
           onChange={(e) => {
-            updateResort(e)
-            setWeatherData(null)
+            if (e.length > 0) {
+              updateResort(e);
+            } else {
+              setSelectedResort(null);
+            }
+            setWeatherData(null);
           }}
         />
       </div>
