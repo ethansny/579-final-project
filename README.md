@@ -1,5 +1,7 @@
 # Ski Resort Weather Forecasting
 
+Try it our here: [Ski Resort Weather Forecasting](https://ethansny.github.io/579-final-project/)
+
 ## Project Overview
 
 I developed a React application that aggregates weather data for a wide array of ski resorts and places a pin on an interactive map indicating the resort's location. Users also have the option to select any point on the map to get weather information for that area. Additionally, there is some customization available regarding the specific weather data received upon request.
