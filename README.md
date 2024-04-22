@@ -1,6 +1,6 @@
 # Ski Resort Weather Forecasting
 
-Try it our here: [Ski Resort Weather Forecasting](https://ethansny.github.io/579-final-project/)
+Try it out here: [Ski Resort Weather Forecasting](https://ethansny.github.io/579-final-project/)
 
 ## Project Overview
 
