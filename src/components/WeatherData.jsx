@@ -14,6 +14,7 @@ const WeatherData = ({ weatherData, resort }) => {
     wind_gusts_10m_max: 'Wind Gusts',
   };
 
+  // formats the values for display
   const formatValue = (key, value) => {
     if (key === 'temperature_2m_max' || key === 'temperature_2m_min') {
       return `${value}°C`;
@@ -27,6 +28,7 @@ const WeatherData = ({ weatherData, resort }) => {
     return value;
   };
 
+  // dynamically renders the weather data
   const renderWeatherData = () => {
     return weatherData.time.map((day, index) => {
       return (
